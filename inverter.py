@@ -4,6 +4,7 @@ from dataclasses_json import dataclass_json
 from typing import * 
 from MAGLabPyLib import MAGDaemon
 import logging
+from collections import namedtuple
 @dataclass_json
 @dataclass
 class _MODBUS:
@@ -12,16 +13,32 @@ class _MODBUS:
     timeout: float
     baud: int
 
-class BATTERY(MAGDaemon):
+class INVERTER(MAGDaemon):
     @dataclass_json
     @dataclass
     class Config(MAGDaemon.Config):
         modbus: _MODBUS
         loglevel: Optional[str] = None
 
+    _Frame = namedtuple("Frame", ["cnt", "err", "unk", "sys", "i_v", "util", "o_v", "watt"])
+
+    @staticmethod
+    def _pack_frame(data):
+        fr = INVERTER._Frame(
+            cnt = data[0] >> 8,
+            err = data[0] & 0xFF,
+            unk = data[1] >> 12,
+            sys = (data[1] >> 8) & 0xF,
+            i_v = (((data[1] & 0xFF) << 4) + (data[2] >> 12)),
+            util = data[2] >> 8 & 0xF,
+            o_v = data[2] & 0xFF,
+            watt = data[3]
+        )
+        return fr
+
     def __init__(self):
-        long_name = "maglab_battery"
-        cfg_file_name = "battery"
+        long_name = "maglab_inverter"
+        cfg_file_name = "inv_cfg"
         self.logger = logging.getLogger(__name__)
         self.logger.setLevel(logging.DEBUG) # just for development
         self.set_config(long_name, cfg_file_name)
@@ -72,27 +89,30 @@ class BATTERY(MAGDaemon):
         super().main()
         self.logger.info("Starting main loop")
         self.loop_start()
-        length = 1.0
+        last_count = 0
+        length = 0.25
         now = time.time()
         target_time = now + length
         wait_time = target_time - now
         while not self.exit_evt.wait(wait_time):
             """ do work here """
-            fields = ["SOC", "Voltage"]
-            reading = self.handle_modbus(self.instr.read_registers, 21, 2)
-            new_checks = dict(zip(fields, reading))
+            fr = self._pack_frame(self.handle_modbus(self.instr.read_registers, 0, 4, functioncode=4))
+            new_checks = fr._asdict()
 
-            fields = [f"cell{i:02}" for i in range(0, 16)]
-            reading = self.handle_modbus(self.instr.read_registers, 113, 16)
-            new_checks.update(dict(zip(fields, reading)))
-            
+            """ calculate time """
             now = time.time()
             try:
                 new_checks["Time Since Last"] = now - self.last_checkup
             except AttributeError:
                 pass
-            self.checks = new_checks
-            self.checkup("run")
+
+            """ publish if a new frame came in """
+            if fr.cnt != last_count:
+                last_count = fr.cnt
+                if fr.err == 0:
+                    self.checks = new_checks
+                    self.checkup("run")
+
             """ processing time... """
             target_time += length
             wait_time = target_time - now
@@ -101,5 +121,5 @@ class BATTERY(MAGDaemon):
 
 if __name__ == "__main__":
     logging.basicConfig(level=logging.DEBUG)
-    battery = BATTERY()
-    battery.main()
+    inv = INVERTER()
+    inv.main()

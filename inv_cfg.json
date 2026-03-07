@@ -1,6 +1,6 @@
 {
-	"name": "batt00",
-	"comment": "This is a configuration file for the battery.",
+	"name": "inv00",
+	"comment": "This is a configuration file for the inverter.",
 	"daemon": {
 		"loglevel": "debug"
 	},
@@ -13,10 +13,10 @@
 		"loglevel": "info"
 	},
 	"modbus": {
-		"port": "/dev/serial/by-id/usb-FTDI_FT232R_USB_UART_B0029B6Q-if00-port0",
-		"sid": 1,
-		"timeout": 0.08,
-		"baud": 9600
+		"port": "/dev/serial/by-id/usb-1a86_USB_Serial-if00-port0",
+		"sid": 3,
+		"timeout": 0.02,
+		"baud": 38400
 	},
 	"loglevel": "debug"
 }
