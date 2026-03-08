@@ -2,7 +2,7 @@
 	"name": "inv00",
 	"comment": "This is a configuration file for the inverter.",
 	"daemon": {
-		"loglevel": "debug"
+		"loglevel": "info"
 	},
 	"mqtt": {
 		"data_sources": ["reporter/checkup_req"],
@@ -18,5 +18,5 @@
 		"timeout": 0.02,
 		"baud": 38400
 	},
-	"loglevel": "debug"
+	"loglevel": "info"
 }

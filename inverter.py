@@ -55,7 +55,7 @@ class INVERTER(MAGDaemon):
     def on_message(self, client, userdata, message):
         if message.topic in self.config.mqtt.data_sources:
             if message.topic.endswith("checkup_req"):
-                self.logger.info("Received checkup")
+                self.logger.debug("Received checkup")
                 self.checkup("checkup")
         else:
             self.logger.warning("Message not in data sources")
@@ -80,7 +80,10 @@ class INVERTER(MAGDaemon):
         named_checks = {f"{self.config.name} {k}": v for (k, v) in self.checks.items()}
         self.last_checkup = time.time()
         named_checks["time"] = self.last_checkup
-        self.logger.debug(f"Publishing: {named_checks} to {subtopic}")
+        if subtopic == "checkup":
+            self.logger.info(f"Publishing: {named_checks} to {subtopic}")
+        else:
+            self.logger.debug(f"Publishing: {named_checks} to {subtopic}")
         self.publish(f"{self.config.name}/{subtopic}", json.dumps(named_checks))
 
 
