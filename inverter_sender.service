@@ -1,0 +1,14 @@
+[Unit]
+Description=Inverter Sender
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+User=maglab
+Group=maglab
+Restart=on-failure
+EnvironmentFile=/home/maglab/inverter/inverter.env
+ExecStart=/home/maglab/inverter/inverter.py
+
+[Install]
+WantedBy=multi-user.target

@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 import minimalmodbus, time, json
 from dataclasses import dataclass
 from dataclasses_json import dataclass_json
@@ -81,9 +83,9 @@ class INVERTER(MAGDaemon):
         self.last_checkup = time.time()
         named_checks["time"] = self.last_checkup
         if subtopic == "checkup":
-            self.logger.info(f"Publishing: {named_checks} to {subtopic}")
+            self.logger.info(f"Publishing {subtopic}: {named_checks}")
         else:
-            self.logger.debug(f"Publishing: {named_checks} to {subtopic}")
+            self.logger.debug(f"Publishing {subtopic}: {named_checks}")
         self.publish(f"{self.config.name}/{subtopic}", json.dumps(named_checks))
 
 
