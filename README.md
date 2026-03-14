@@ -11,7 +11,7 @@ This daemon sends decoded inverter data onto the HAL network.
 
 The division ratios prototyped in the inverter decoder are not applied: https://github.com/MAGLaboratory/inverter_decoder 
 
-### Modbus Publishing
+### MQTT Publishing
 Each inverter frame is published onto the network under the `run` topic.
 
 Each time the `reporter/checkup_req` is received, cached data is published under the `checkup` topic
