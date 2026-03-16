@@ -2,7 +2,7 @@
 	"name": "inv00",
 	"comment": "This is a configuration file for the inverter.",
 	"daemon": {
-		"loglevel": "info"
+		"loglevel": "warning"
 	},
 	"mqtt": {
 		"data_sources": ["reporter/checkup_req"],
@@ -10,7 +10,7 @@
 		"port": 1883,
 		"timeout": 15,
 		"dis_timeout": 90,
-		"loglevel": "info"
+		"loglevel": "warning"
 	},
 	"modbus": {
 		"port": "/dev/serial/by-id/usb-1a86_USB_Serial-if00-port0",
@@ -18,5 +18,5 @@
 		"timeout": 0.02,
 		"baud": 38400
 	},
-	"loglevel": "info"
+	"loglevel": "warning"
 }

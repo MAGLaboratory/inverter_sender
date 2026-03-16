@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-import minimalmodbus, time, json
+import minimalmodbus, time, json, sys
 from dataclasses import dataclass
 from dataclasses_json import dataclass_json
 from typing import * 
@@ -124,7 +124,9 @@ class INVERTER(MAGDaemon):
             if wait_time <= 0.0:
                 wait_time = 0.0
 
+        return self.exit_code
+
 if __name__ == "__main__":
     logging.basicConfig(level=logging.DEBUG)
     inv = INVERTER()
-    inv.main()
+    sys.exit(inv.main())
