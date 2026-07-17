@@ -6,7 +6,7 @@
 	},
 	"mqtt": {
 		"data_sources": ["reporter/checkup_req"],
-		"broker": "hal.maglab",
+		"broker": "jane.maglab",
 		"port": 1883,
 		"timeout": 15,
 		"dis_timeout": 90,
